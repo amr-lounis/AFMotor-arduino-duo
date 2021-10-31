@@ -52,28 +52,31 @@ void DC_Set(uint8_t p_motor, int p_speed) {
 }
 void StepperRunOne(int p_port, int p_setup, int p_delay, uint8_t p_pwm) {
     p_setup = abs(p_setup % 8);
+    int p_1 = p_port * 2;
+    int p_2 = p_port * 2 + 1;
+    
     switch (p_setup) {
-    case 0: {port_state[p_port * 2 + 1] = 0b00; port_state[p_port] = 0b01; } break;
-    case 1: {port_state[p_port * 2 + 1] = 0b01; port_state[p_port] = 0b01; } break;
-    case 2: {port_state[p_port * 2 + 1] = 0b01; port_state[p_port] = 0b00; } break;
-    case 3: {port_state[p_port * 2 + 1] = 0b01; port_state[p_port] = 0b10; } break;
-    case 4: {port_state[p_port * 2 + 1] = 0b00; port_state[p_port] = 0b10; } break;
-    case 5: {port_state[p_port * 2 + 1] = 0b10; port_state[p_port] = 0b10; } break;
-    case 6: {port_state[p_port * 2 + 1] = 0b10; port_state[p_port] = 0b00; } break;
-    case 7: {port_state[p_port * 2 + 1] = 0b10; port_state[p_port] = 0b01; } break;
+    case 0: {port_state[p_2] = 0b00; port_state[p_1] = 0b01; } break;
+    case 1: {port_state[p_2] = 0b01; port_state[p_1] = 0b01; } break;
+    case 2: {port_state[p_2] = 0b01; port_state[p_1] = 0b00; } break;
+    case 3: {port_state[p_2] = 0b01; port_state[p_1] = 0b10; } break;
+    case 4: {port_state[p_2] = 0b00; port_state[p_1] = 0b10; } break;
+    case 5: {port_state[p_2] = 0b10; port_state[p_1] = 0b10; } break;
+    case 6: {port_state[p_2] = 0b10; port_state[p_1] = 0b00; } break;
+    case 7: {port_state[p_2] = 0b10; port_state[p_1] = 0b01; } break;
     default:break;
     }
-    pins_pwm_value[p_port * 2 + 1] = p_pwm; pins_pwm_value[p_port * 2] = p_pwm;
+    pins_pwm_value[p_2] = p_pwm; pins_pwm_value[p_1] = p_pwm;
     setPorts();
     delay(p_delay);
     //--
-    pins_pwm_value[p_port * 2 + 1] = 0x00; pins_pwm_value[p_port * 2] = 0x00;
+    pins_pwm_value[p_2] = 0x00; pins_pwm_value[p_1] = 0x00;
     setPorts();
 }
 
 void StepperRun(int p_port, int p_setup, int p_delay, uint8_t p_pwm) {
-    if (p_setup > 0) for (int i = 0; i < p_setup; i++) StepperRunOne(0, i, p_delay, p_pwm);
-    else if (p_setup < 0) for (int i = abs(p_setup); i > 0; i--)  StepperRunOne(0, i, p_delay, p_pwm);
+    if (p_setup > 0) for (int i = 0; i < p_setup; i++) StepperRunOne(p_port, i, p_delay, p_pwm);
+    else if (p_setup < 0) for (int i = abs(p_setup); i > 0; i--)  StepperRunOne(p_port, i, p_delay, p_pwm);
 }
 
 //------------------------------------------------------------- init
@@ -85,18 +88,23 @@ void setup()
 //------------------------------------------------------------- loop
 void loop()
 {
-    //for (int i = 0; i < 4; i++) {
-    //    DC_Set(i, 255);
-    //    delay(1000);
-    //    DC_Set(i, -255);
-    //    delay(1000);
-    //    DC_Set(i, 0);
-    //    delay(1000);
-    //}
+    for (int dc_i = 0; dc_i < 4; dc_i++) {
+        DC_Set(dc_i, 255);
+        delay(1000);
+        DC_Set(dc_i, -255);
+        delay(1000);
+        DC_Set(dc_i, 0);
+        delay(1000);
+    }
 
-    StepperRun(0, 400, 5, 255);
+    StepperRun(1, 200, 10, 255);
     delay(2000);
-    StepperRun(0, -400, 5, 255);
+    StepperRun(1, -200, 10, 255);
+    delay(2000);
+
+    StepperRun(0, 500, 10, 255);
+    delay(2000);
+    StepperRun(0, -500, 10, 255);
     delay(2000);
 }
 //------------------------------------------------------------- debug
