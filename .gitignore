@@ -2,7 +2,9 @@
 
 .git/*
 __vm/*
+.vs/*
 
 *.vcxproj
 *.filters
 *.user
+*.json

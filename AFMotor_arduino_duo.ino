@@ -88,14 +88,14 @@ void setup()
 //------------------------------------------------------------- loop
 void loop()
 {
-    for (int dc_i = 0; dc_i < 4; dc_i++) {
-        DC_Set(dc_i, 255);
-        delay(1000);
-        DC_Set(dc_i, -255);
-        delay(1000);
-        DC_Set(dc_i, 0);
-        delay(1000);
-    }
+    //for (int dc_i = 0; dc_i < 4; dc_i++) {
+    //    DC_Set(dc_i, 255);
+    //    delay(1000);
+    //    DC_Set(dc_i, -255);
+    //    delay(1000);
+    //    DC_Set(dc_i, 0);
+    //    delay(1000);
+    //}
 
     StepperRun(1, 200, 10, 255);
     delay(2000);
